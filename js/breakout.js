@@ -45,6 +45,7 @@ var run = function () {
     ball1.body.collideWorldBounds = true;
 
     ball2 = game.add.sprite(game.world.width * 0.5 + 40, game.world.height - 45, 'ball');
+    changeTint(ball2);
     ball2.animations.add('wobble', [0, 1, 0, 2, 0, 1, 0, 2, 0], 24);
     ball2.anchor.set(0.5);
     game.physics.enable(ball2, Phaser.Physics.ARCADE);
@@ -80,6 +81,10 @@ var run = function () {
     // Button
     startButton = game.add.button(game.world.width * 0.5, game.world.height * 0.5, 'button', startGame, this, 1, 0, 2);
     startButton.anchor.set(0.5);
+  }
+
+  function changeTint(ball) {
+    ball.tint = Math.random() * 0xffffff;
   }
 
   function ballLeavesBounds() {
@@ -149,6 +154,7 @@ var run = function () {
   function ballHitBall(ball1, ball2) {
     ball1.animations.play('wobble');
     ball2.animations.play('wobble');
+    changeTint(ball2);
   }
 
   function ballHitBrick(ball, brick) {
@@ -163,16 +169,19 @@ var run = function () {
     scoreText.setText('Points: ' + score);
   }
 
-  function checkGameWinCondition() {
+  function brickHasLiveChildren() {
     var num_children = bricks.children.length;
-    var count_alive = 0;
     for (var i = 0; i < num_children; i++) {
       if (bricks.children[i].alive) {
-        count_alive++;
+        return true
       }
     }
-    if (count_alive === 0) {
-      alert.log('You win! Score:' + score);
+    return false;
+  }
+
+  function checkGameWinCondition() {
+    if (!brickHasLiveChildren()) {
+      alert('You win! Score: ' + score);
       document.location.reload();
     }
   }
